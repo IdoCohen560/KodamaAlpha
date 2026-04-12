@@ -308,11 +308,16 @@ export interface StatusState {
   hat: string;
   reaction: string;
   muted: boolean;
-  // claude-den progression fields
+  // Pet progression
   level: number;
   xp: number;
   xpNext: number;
   evolution: number;
+  // User progression
+  userLevel: number;
+  userXp: number;
+  userXpNext: number;
+  // Shared
   mood: string;
   moodColor: string;
   streak: number;
@@ -329,6 +334,14 @@ export function writeStatusState(
   const { renderFace, RARITY_STARS, ensureCompanionDefaults } =
     require("./engine.ts") as typeof import("./engine.ts");
   const c = ensureCompanionDefaults(companion);
+
+  // Load user profile for user-level display
+  let userLevel = 1, userXp = 0;
+  try {
+    const profileData = JSON.parse(readFileSync(join(STATE_DIR, "profile.json"), "utf8"));
+    userLevel = profileData.level ?? 1;
+    userXp = profileData.xp ?? 0;
+  } catch { /* profile may not exist yet */ }
   const state: StatusState = {
     name:     c.name,
     species:  c.bones.species,
@@ -343,9 +356,12 @@ export function writeStatusState(
     muted:    muted ?? false,
     level:    c.level,
     xp:       c.xp,
-    xpNext:   Math.floor(200 * (c.level + 1) * (c.level + 1)),
+    xpNext:   c.level <= 1 ? 800 : Math.floor(200 * (c.level + 1) * (c.level + 1)) - Math.floor(200 * c.level * c.level),
     evolution: c.evolution,
-    mood:     "",       // filled by mood calculator at render time
+    userLevel,
+    userXp,
+    userXpNext: userLevel <= 1 ? 800 : Math.floor(200 * (userLevel + 1) * (userLevel + 1)) - Math.floor(200 * userLevel * userLevel),
+    mood:     "",
     moodColor: "gray",
     streak:   0,        // filled by streak system
     contextPct: 0,

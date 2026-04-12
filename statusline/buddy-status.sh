@@ -255,34 +255,30 @@ for line in "${ART_LINES[@]}"; do
 done
 ALL_LINES+=("$NAME_LINE"); ALL_COLORS+=("$DIM")
 
-# ─── Progression info line (level + mood + streak + context) ─────────────────
-LEVEL=$(jq -r '.level // 1' "$STATE" 2>/dev/null)
+# ─── Progression info lines ──────────────────────────────────────────────────
+PET_LEVEL=$(jq -r '.level // 1' "$STATE" 2>/dev/null)
+USER_LEVEL=$(jq -r '.userLevel // 1' "$STATE" 2>/dev/null)
+USER_XP=$(jq -r '.userXp // 0' "$STATE" 2>/dev/null)
+USER_XP_NEXT=$(jq -r '.userXpNext // 800' "$STATE" 2>/dev/null)
+PET_XP=$(jq -r '.xp // 0' "$STATE" 2>/dev/null)
+PET_XP_NEXT=$(jq -r '.xpNext // 800' "$STATE" 2>/dev/null)
 MOOD_COLOR=$(jq -r '.moodColor // "gray"' "$STATE" 2>/dev/null)
 STREAK=$(jq -r '.streak // 0' "$STATE" 2>/dev/null)
-CTX_PCT=$(jq -r '.contextPct // 0' "$STATE" 2>/dev/null)
 GEN=$(jq -r '.generation // 0' "$STATE" 2>/dev/null)
-ASC=$(jq -r '.ascension // 0' "$STATE" 2>/dev/null)
 
-# Mood dot (unlocks at L3)
+# Mood dot
 MOOD_DOT=""
-if [ "$LEVEL" -ge 3 ]; then
-    case "$MOOD_COLOR" in
-        green) MC=$'\033[32m' ;; red) MC=$'\033[31m' ;; blue) MC=$'\033[34m' ;;
-        gold)  MC=$'\033[33m' ;; *)   MC=$'\033[90m' ;;
-    esac
-    MOOD_DOT="${MC}●${NC} "
-fi
+case "$MOOD_COLOR" in
+    green) MC=$'\033[32m'; MOOD_DOT="${MC}●${NC} " ;;
+    red)   MC=$'\033[31m'; MOOD_DOT="${MC}●${NC} " ;;
+    blue)  MC=$'\033[34m'; MOOD_DOT="${MC}●${NC} " ;;
+    gold)  MC=$'\033[33m'; MOOD_DOT="${MC}●${NC} " ;;
+esac
 
-# Streak flame (unlocks at L8, shows when streak >= 7)
+# Streak flame
 STREAK_DISP=""
-if [ "$LEVEL" -ge 8 ] && [ "${STREAK:-0}" -ge 7 ] 2>/dev/null; then
+if [ "${STREAK:-0}" -ge 7 ] 2>/dev/null; then
     STREAK_DISP=" 🔥${STREAK}d"
-fi
-
-# Context % (unlocks at L28)
-CTX_DISP=""
-if [ "$LEVEL" -ge 28 ] && [ "${CTX_PCT:-0}" -gt 0 ] 2>/dev/null; then
-    CTX_DISP=" ctx:${CTX_PCT}%"
 fi
 
 # Generation stars
@@ -292,18 +288,20 @@ if [ "${GEN:-0}" -gt 0 ] 2>/dev/null; then
     GEN_STARS=" ${GEN_STARS}"
 fi
 
-# Ascension badge
-ASC_BADGE=""
-if [ "${ASC:-0}" -gt 0 ] 2>/dev/null; then
-    ASC_BADGE=" [A${ASC}]"
-fi
+# Line 1: User level + XP (the main progression)
+BOLD=$'\033[1m'
+USER_LINE="${BOLD}You${NC} Lv.${USER_LEVEL} ${USER_XP}/${USER_XP_NEXT}xp${GEN_STARS}${STREAK_DISP}"
+USER_PAD=$(( ART_CENTER - ${#USER_LINE} / 3 ))
+[ "$USER_PAD" -lt 0 ] && USER_PAD=0
+USER_LINE_PADDED="$(printf '%*s%s' "$USER_PAD" '' "$USER_LINE")"
+ALL_LINES+=("$USER_LINE_PADDED"); ALL_COLORS+=("$DIM")
 
-PROG_LINE="${MOOD_DOT}Lv.${LEVEL}${GEN_STARS}${ASC_BADGE}${STREAK_DISP}${CTX_DISP}"
-PROG_PAD=$(( ART_CENTER - ${#PROG_LINE} / 2 ))
-[ "$PROG_PAD" -lt 0 ] && PROG_PAD=0
-PROG_LINE_PADDED="$(printf '%*s%s' "$PROG_PAD" '' "$PROG_LINE")"
-
-ALL_LINES+=("$PROG_LINE_PADDED"); ALL_COLORS+=("$DIM")
+# Line 2: Pet level + mood
+PET_LINE="${MOOD_DOT}Pet Lv.${PET_LEVEL} ${PET_XP}/${PET_XP_NEXT}xp"
+PET_PAD=$(( ART_CENTER - ${#PET_LINE} / 3 ))
+[ "$PET_PAD" -lt 0 ] && PET_PAD=0
+PET_LINE_PADDED="$(printf '%*s%s' "$PET_PAD" '' "$PET_LINE")"
+ALL_LINES+=("$PET_LINE_PADDED"); ALL_COLORS+=("$DIM")
 
 ART_W=14
 ART_COUNT=${#ALL_LINES[@]}
