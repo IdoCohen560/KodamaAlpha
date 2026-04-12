@@ -32,14 +32,16 @@ export function levelFromXp(xp: number): number {
 
 export function xpToNextLevel(xp: number): { current: number; needed: number; progress: number } {
   const level = levelFromXp(xp);
-  const currentThreshold = xpForLevel(level);
-  const nextThreshold = xpForLevel(level + 1);
-  const progressXp = xp - currentThreshold;
-  const neededXp = nextThreshold - currentThreshold;
+  // Floor = XP needed to reach current level (0 for level 1)
+  const currentFloor = level <= 1 ? 0 : xpForLevel(level);
+  // Ceiling = XP needed to reach next level
+  const nextCeiling = xpForLevel(level + 1);
+  const progressXp = xp - currentFloor;
+  const neededXp = nextCeiling - currentFloor;
   return {
-    current: progressXp,
+    current: Math.max(0, progressXp),
     needed: neededXp,
-    progress: neededXp > 0 ? progressXp / neededXp : 1,
+    progress: neededXp > 0 ? Math.max(0, progressXp) / neededXp : 1,
   };
 }
 
