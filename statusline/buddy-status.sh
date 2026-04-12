@@ -368,13 +368,8 @@ else
     TOTAL_W=$ART_W
 fi
 MARGIN=8
-# If KODAMA_COMPACT is set (composite mode), skip right-alignment padding
-if [ -n "${KODAMA_COMPACT:-}" ]; then
-    PAD=0
-else
-    PAD=$(( COLS - TOTAL_W - MARGIN ))
-    [ "$PAD" -lt 0 ] && PAD=0
-fi
+PAD=$(( COLS - TOTAL_W - MARGIN ))
+[ "$PAD" -lt 0 ] && PAD=0
 
 SPACER=$(printf "${B}%${PAD}s" "")
 GAP_STR=$(printf '%*s' "$GAP" '')
