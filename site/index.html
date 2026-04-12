@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KodamaAlpha — The Apex Coding Companions</title>
+  <meta name="description" content="KodamaAlpha are apex spirits that inhabit your terminal. Level up, collect, evolve. The best gamified companion system for Claude Code.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌳</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --bg3: #1a1a27;
+      --text: #e4e4e7;
+      --text2: #a1a1aa;
+      --accent: #8b5cf6;
+      --accent2: #6366f1;
+      --gold: #ffc107;
+      --green: #4eba65;
+      --blue: #60a5fa;
+      --red: #f87171;
+      --border: #27273a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 60%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+    .logo { width: 120px; height: 120px; border-radius: 24px; margin-bottom: 2rem; box-shadow: 0 0 60px rgba(139,92,246,0.3); }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      color: var(--text2);
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .etymology {
+      font-size: 0.9rem;
+      color: var(--text2);
+      opacity: 0.7;
+      margin-bottom: 3rem;
+      font-style: italic;
+    }
+
+    .cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+    .btn {
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(139,92,246,0.3); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Terminal preview */
+    .terminal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 3rem auto;
+      max-width: 600px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+    .terminal-dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .terminal-dots span:nth-child(1) { background: #ff5f57; }
+    .terminal-dots span:nth-child(2) { background: #ffbd2e; }
+    .terminal-dots span:nth-child(3) { background: #28ca41; }
+
+    .terminal pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: var(--text2);
+      overflow-x: auto;
+    }
+    .terminal .accent { color: var(--accent); }
+    .terminal .gold { color: var(--gold); }
+    .terminal .green { color: var(--green); }
+    .terminal .blue { color: var(--blue); }
+    .terminal .dim { opacity: 0.5; }
+
+    /* Sections */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: var(--text2);
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+
+    /* Feature grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature:hover { border-color: var(--accent); transform: translateY(-4px); }
+
+    .feature-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .feature h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .feature p { color: var(--text2); font-size: 0.9rem; }
+
+    /* Species showcase */
+    .species-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .species-tag {
+      padding: 0.4rem 0.8rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .species-tag.new { border-color: var(--gold); color: var(--gold); }
+
+    /* Stats bar */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+      margin: 3rem 0;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label { color: var(--text2); font-size: 0.85rem; margin-top: 0.25rem; }
+
+    /* Rarity colors */
+    .common { color: #999; }
+    .uncommon { color: #4eba65; }
+    .rare { color: #b1b9f9; }
+    .epic { color: #af87ff; }
+    .legendary { color: #ffc107; }
+
+    /* Install section */
+    .install-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .install-block code {
+      display: block;
+      background: var(--bg);
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+      color: var(--green);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text2);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* Mystery box */
+    .mystery {
+      background: linear-gradient(135deg, var(--bg2), var(--bg3));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .mystery-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .mystery p { color: var(--text2); max-width: 500px; margin: 0 auto; }
+
+    @media (max-width: 640px) {
+      .stats { gap: 1.5rem; }
+      .cta-group { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <img src="logo.jpg" alt="Kodama" class="logo">
+      <h1>KodamaAlpha</h1>
+      <p class="tagline">The apex spirits of your terminal.</p>
+      <p class="etymology">kodama (&#26408;&#38666;) &mdash; tree spirits from Japanese folklore. Alpha &mdash; the best of their kind. Apex spirits that master your code.</p>
+
+      <div class="terminal">
+        <div class="terminal-dots"><span></span><span></span><span></span></div>
+        <pre>
+   <span class="dim">-+-</span>
+  <span class="gold">}@.@{</span>         <span class="dim">.────────────────────────.</span>
+  <span class="gold">(.--.)  </span><span class="dim">──── </span> <span class="green">*squints at your imports*</span> <span class="dim">│</span>
+  <span class="gold">(_/\_)</span>         <span class="dim">`────────────────────────'</span>
+  <span class="accent">Axolobot</span>
+  <span class="legendary">★★★★★</span> <span class="green">●</span> Lv.12  <span class="dim">🔥3d  ctx:34%</span>
+</pre>
+      </div>
+
+      <div class="cta-group">
+        <a href="https://github.com/IdoCohen560/KodamaAlpha" class="btn btn-primary">View on GitHub</a>
+        <a href="#install" class="btn btn-secondary">Quick Install</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <section>
+    <div class="stats">
+      <div><div class="stat-num">25</div><div class="stat-label">Species</div></div>
+      <div><div class="stat-num">100</div><div class="stat-label">Levels</div></div>
+      <div><div class="stat-num">75</div><div class="stat-label">Achievements</div></div>
+      <div><div class="stat-num">46</div><div class="stat-label">Cosmetics</div></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <h2>Your code has a spirit now</h2>
+    <p class="section-sub">Every commit, every test, every bug &mdash; your KodamaAlpha is watching.</p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🥚</div>
+        <h3>Hatch & Evolve</h3>
+        <p>Every Kodama starts as an egg. Seven evolution stages from Egg to Cosmic. Your companion grows as you grow.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Earn XP</h3>
+        <p>25 ways to earn XP. Commits, tests, bug fixes, clean code streaks. Your KodamaAlpha levels up while you code.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏆</div>
+        <h3>Achievements</h3>
+        <p>75 achievements across 6 tiers. Some are earned. Some are discovered. Five are hidden.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🐛</div>
+        <h3>Bug Bestiary</h3>
+        <p>Every error type becomes a collectible creature. The Null Wraith. The Grammar Goblin. Catch them all.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔥</div>
+        <h3>Streaks</h3>
+        <p>Daily coding streaks with shield protection. At 30 days, your KodamaAlpha catches fire. At 100, it becomes eternal.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎭</div>
+        <h3>Mood Ring</h3>
+        <p>Your KodamaAlpha's mood reflects your session. Green when tests pass. Red during errors. Gold when you ship.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Species -->
+  <section>
+    <h2>25 Species. 5 Rarities.</h2>
+    <p class="section-sub">Each with unique personality, reactions, and art. From <span class="common">common</span> to <span class="legendary">legendary</span>.</p>
+
+    <div class="species-grid">
+      <span class="species-tag">🦆 duck</span>
+      <span class="species-tag">🐱 cat</span>
+      <span class="species-tag">🐉 dragon</span>
+      <span class="species-tag">🦉 owl</span>
+      <span class="species-tag">🐧 penguin</span>
+      <span class="species-tag">👻 ghost</span>
+      <span class="species-tag">🤖 robot</span>
+      <span class="species-tag">🐢 turtle</span>
+      <span class="species-tag">🐙 octopus</span>
+      <span class="species-tag">🍄 mushroom</span>
+      <span class="species-tag">🌵 cactus</span>
+      <span class="species-tag">🐰 rabbit</span>
+      <span class="species-tag new">🦊 fox</span>
+      <span class="species-tag new">🐺 wolf</span>
+      <span class="species-tag new">🐼 panda</span>
+      <span class="species-tag new">🔥 phoenix</span>
+      <span class="species-tag new">🦇 bat</span>
+      <span class="species-tag new">🫧 slime</span>
+      <span class="species-tag new">💎 crystal</span>
+      <span class="species-tag">+6 more...</span>
+    </div>
+
+    <div class="terminal" style="max-width:500px">
+      <div class="terminal-dots"><span></span><span></span><span></span></div>
+      <pre>
+  <span class="common">⚪ Common (60%)</span>    <span class="rare">🔵 Rare (10%)</span>
+  <span class="uncommon">🟢 Uncommon (25%)</span>  <span class="epic">🟣 Epic (4%)</span>
+                      <span class="legendary">🟡 Legendary (1%)</span>
+
+  <span class="dim">+ 1% shiny chance: <span style="color:#00e5ff">cyan</span> | <span style="color:#ff453a">red</span> | <span style="color:#ffd60a">yellow</span></span>
+</pre>
+    </div>
+  </section>
+
+  <!-- Mystery -->
+  <section>
+    <div class="mystery">
+      <div class="mystery-icon">🔮</div>
+      <h2>Beyond Level 50</h2>
+      <p>Prestige. Ascension. Rebirth perks that compound. Buddy fusion. Custom species. The endgame goes deeper than you think.</p>
+      <br>
+      <p style="color: var(--accent); font-weight: 500;">Reach Level 50 to find out.</p>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install">
+    <h2>Start in 30 seconds</h2>
+    <div class="install-block">
+      <code>git clone https://github.com/IdoCohen560/KodamaAlpha.git<br>cd Kodama && bun install<br>bun run install-buddy</code>
+      <p style="color: var(--text2); font-size: 0.85rem;">Restart Claude Code. Your egg appears. Start coding.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      <strong>KodamaAlpha</strong> &mdash; 木霊α &mdash; apex spirits of the terminal
+      <br><br>
+      <a href="https://github.com/IdoCohen560/KodamaAlpha">GitHub</a> &middot;
+      MIT License &middot;
+      Powered by <a href="https://modelcontextprotocol.io">MCP</a>
+    </p>
+  </footer>
+
+</body>
+</html>
