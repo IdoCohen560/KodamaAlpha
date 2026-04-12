@@ -25,7 +25,7 @@
  */
 
 import type { Companion, BuddyBones, BuddyStats, Species, Rarity, Eye, Hat } from "./engine.ts";
-import { ensureCompanionDefaults, SPECIES, RARITIES, RARITY_WEIGHTS } from "./engine.ts";
+import { ensureCompanionDefaults, SPECIES, RARITIES, RARITY_WEIGHTS, SHINY_COLORS } from "./engine.ts";
 
 // ─── Portmanteau names ──────────────────────────────────────────────────────
 
@@ -85,6 +85,11 @@ export function fuseCompanions(
   const a = ensureCompanionDefaults(parentA);
   const b = ensureCompanionDefaults(parentB);
 
+  // Guard: cannot fuse a companion with itself
+  if (a.name === b.name && a.hatchedAt === b.hatchedAt) {
+    throw new Error("Cannot fuse a Kodama with itself");
+  }
+
   // Species portmanteau
   const hybridSpeciesName = portmanteau(a.bones.species, b.bones.species);
 
@@ -98,7 +103,6 @@ export function fuseCompanions(
   // Shiny: 25% if either parent is shiny, else 1%
   const shinyChance = (a.bones.shiny || b.bones.shiny) ? 0.25 : 0.01;
   const isShiny = Math.random() < shinyChance;
-  const { SHINY_COLORS } = require("./engine.ts");
   const shinyColor = isShiny ? SHINY_COLORS[Math.floor(Math.random() * SHINY_COLORS.length)] : undefined;
 
   // Heritage XP: 10% of combined parent XP

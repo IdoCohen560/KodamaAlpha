@@ -684,13 +684,15 @@ server.tool(
       return { content: [{ type: "text", text: `\uD83D\uDD12 Aquarium unlocks at **Lv.5** (current: Lv.${c.level})` }] };
     }
 
-    // Try tmux popup
+    // Try tmux popup (tmux only supports ONE popup per client — close any existing first)
     if (process.env.TMUX) {
       try {
         const { execSync } = require("child_process");
         const scriptDir = require("path").resolve(__dirname, "..", "popup");
+        // Close any existing popup (buddy overlay, etc.) before opening aquarium
+        try { execSync("tmux display-popup -C", { stdio: "ignore" }); } catch {}
         execSync(`tmux display-popup -E -w 60 -h 20 "${scriptDir}/aquarium-popup.sh"`, { stdio: "ignore" });
-        return { content: [{ type: "text", text: "Aquarium popup launched." }] };
+        return { content: [{ type: "text", text: "Aquarium popup closed." }] };
       } catch { /* fall through to text mode */ }
     }
 

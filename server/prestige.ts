@@ -91,6 +91,7 @@ export function performPrestige(companion: Companion, perkId: string): Companion
   c.evolution = 1;
   c.generation += 1;
   c.prestigePerks.push(perkId);
+  c.allocatedSkills = [];  // reset skill tree on prestige
 
   // Persist via manifest
   const m = loadManifest();
@@ -117,6 +118,7 @@ export function performAscension(companion: Companion, perkId: string): Companio
   c.evolution = 1;
   c.ascension += 1;
   c.ascensionPerks.push(perkId);
+  c.allocatedSkills = [];  // reset skill tree on ascension
 
   const m = loadManifest();
   m.companions[m.active] = c;

@@ -169,6 +169,7 @@ Hooks → events.ndjson → Progression Engine → status.json → Status Line
 ```
 
 - **Zero daemons** — everything runs in hooks or MCP tool calls
+- **Popup coexistence** — tmux allows only ONE popup per client. The aquarium popup closes any existing popup before opening. The buddy overlay (if active) will auto-reopen when the aquarium closes. The status line and composite multiplexer always run regardless of popups — they're not popups, they're Claude Code's built-in status bar.
 - **Atomic writes** — tmp file → rename for crash safety
 - **Session isolation** — per-tmux-pane reaction state
 - **Composite status line** — chains with other tools without conflicts

@@ -36,6 +36,7 @@ export interface AchievementContext {
   currentDow: number;       // 0=Sun
   currentDay: number;
   currentMonth: number;
+  currentMinute: number;
   isLeapDay: boolean;
   isFriday13: boolean;
 }
@@ -147,7 +148,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 
   // ── Secret (5) ─────────────────────────────────────────────────────────
   { id: "friday-13",      name: "Cursed",              tier: "secret", desc: "Fix a bug on Friday the 13th",  check: c => c.isFriday13, hint: "Some days are unluckier than others...", cosmeticReward: "\u15E3 eye" },
-  { id: "pi-commit",      name: "Irrational",          tier: "secret", desc: "Commit at exactly 3:14",       check: c => c.currentHour === 3 && c.currentDay === 14 && c.currentMonth === 3, hint: "Time is a circle..." },
+  { id: "pi-commit",      name: "Irrational",          tier: "secret", desc: "Commit at exactly 3:14 AM or PM",  check: c => (c.currentHour === 3 || c.currentHour === 15) && c.currentMinute === 14, hint: "Time is a circle..." },
   { id: "leap-bug",       name: "Temporal Anomaly",    tier: "secret", desc: "Fix a bug on Feb 29",          check: c => c.isLeapDay, hint: "Once every four years...", cosmeticReward: "glitch hat" },
   { id: "palindrome",     name: "Mirror Mirror",       tier: "secret", desc: "Palindrome commit message",    check: () => false, hint: "Forwards, backwards, all the same..." },
   { id: "prestige-3",     name: "Thrice Reforged",     tier: "secret", desc: "Complete 3 prestiges",         check: c => c.companion.generation >= 3, hint: "Some journeys never end...", cosmeticReward: "void aquarium" },
@@ -220,6 +221,7 @@ export function checkAchievements(
     currentDow: now.getDay(),
     currentDay: now.getDate(),
     currentMonth: now.getMonth() + 1,
+    currentMinute: now.getMinutes(),
     isLeapDay: now.getMonth() === 1 && now.getDate() === 29,
     isFriday13: now.getDay() === 5 && now.getDate() === 13,
   };
