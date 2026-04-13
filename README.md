@@ -65,6 +65,19 @@ bun run install-buddy    # registers MCP server, hooks, status line
 
 Restart Claude Code. Your KodamaAlpha egg appears in the status line. Start coding — it hatches at Level 5.
 
+## Ruflo Compatible
+
+KodamaAlpha works seamlessly alongside [RuFlo](https://github.com/ruvnet/claude-flow) — the multi-agent swarm orchestration framework for Claude Code. The composite statusline renders both the RuFlo TUI dashboard and your Kodama together, with independent toggle support.
+
+<img src="docs/ruflo-compatible.png" alt="RuFlo + KodamaAlpha composite statusline" width="720" />
+
+**Features when paired with RuFlo:**
+- Full 15-line composite statusline (RuFlo dashboard + Kodama art)
+- Session cost tracking ($USD per turn)
+- Swarm agent count, CVE status, memory, context %, intelligence score
+- Independent mode switching: `STATUSLINE_MODE=ruflo|buddy|both`
+- All 18+ species with signature sounds render correctly alongside the dashboard
+
 ## How It Works
 
 Kodama uses Claude Code's extension points — no binary patching, survives every update:
