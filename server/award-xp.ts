@@ -19,6 +19,20 @@ if (!reason) process.exit(0);
 
 const result = awardXP(reason, sid);
 
+// Sync status.json so the statusline reflects updated XP/level
+try {
+  const { readFileSync } = require("fs");
+  const { join } = require("path");
+  const { homedir } = require("os");
+  const MANIFEST = join(homedir(), ".claude-buddy", "menagerie.json");
+  const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
+  const comp = manifest.companions[manifest.active];
+  if (comp) {
+    const { ensureCompanionDefaults } = require("./engine.ts");
+    writeStatusState(ensureCompanionDefaults(comp));
+  }
+} catch { /* non-critical */ }
+
 // Check achievements after XP award
 if (result.awarded > 0) {
   try {
