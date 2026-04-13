@@ -17,6 +17,10 @@
 
 <br>
 
+<img src="docs/kodama-demo.png" alt="KodamaAlpha in Claude Code" width="720" />
+
+<br>
+
 <table>
 <tr>
 <td align="center" width="25%">
