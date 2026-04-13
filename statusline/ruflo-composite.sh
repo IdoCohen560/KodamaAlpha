@@ -7,6 +7,23 @@ cat >/dev/null 2>&1
 
 MODE="${STATUSLINE_MODE:-both}"
 
+# --- Terminal width detection (from buddy-status.sh) ---
+BB=$'\xe2\xa0\x80'  # Braille Blank U+2800 — survives JS .trim()
+COLS=0
+_PID=$$
+for _ in 1 2 3 4 5; do
+    _PID=$(ps -o ppid= -p "$_PID" 2>/dev/null | tr -d ' ')
+    [ -z "$_PID" ] || [ "$_PID" = "1" ] && break
+    _PTY=$(readlink "/proc/${_PID}/fd/0" 2>/dev/null)
+    if [ -c "$_PTY" ] 2>/dev/null; then
+        COLS=$(stty size < "$_PTY" 2>/dev/null | awk '{print $2}' || echo 0)
+        COLS="${COLS:-0}"
+        [ "${COLS}" -gt 40 ] 2>/dev/null && break
+    fi
+done
+[ "${COLS:-0}" -lt 40 ] 2>/dev/null && COLS=${COLUMNS:-0}
+[ "${COLS:-0}" -lt 40 ] 2>/dev/null && COLS=125
+
 # Colors
 R=$'\033[0m' B=$'\033[1m' D=$'\033[2m'
 PU=$'\033[1;35m' CY=$'\033[1;36m' BL=$'\033[1;34m' GR=$'\033[1;32m'
@@ -121,105 +138,29 @@ if [ -f "$BUDDY_STATE" ]; then
       wizard)    HL="  /^\\" ;;
     esac
 
-    # Padding prefix for right-alignment
-    P="                                        "
-
-    # Species art (all 18 species from buddy)
-    [ -n "$HL" ] && echo "${KC}${P}${HL}${R}"
+    # --- Species art as variables (composable for both render paths) ---
+    L0="" # hat line
+    [ -n "$HL" ] && L0="$HL"
     case "$SPECIES" in
-      axolotl)
-        echo "${KC}${P}}~(____)~{${R}"
-        echo "${KC}${P}}~(${EYE}..${EYE})~{${R}"
-        echo "${KC}${P} (.--.)"
-        echo "${KC}${P} (_/\\_)${R}" ;;
-      duck)
-        echo "${KC}${P}   __${R}"
-        echo "${KC}${P} <(${EYE} )___${R}"
-        echo "${KC}${P}  (  ._>${R}"
-        echo "${KC}${P}   \`--'${R}" ;;
-      goose)
-        echo "${KC}${P}  (${EYE}>${R}"
-        echo "${KC}${P}   ||${R}"
-        echo "${KC}${P} _(__)_${R}"
-        echo "${KC}${P}  ^^^^${R}" ;;
-      blob)
-        echo "${KC}${P} .----.${R}"
-        echo "${KC}${P}( ${EYE}  ${EYE} )${R}"
-        echo "${KC}${P}(      )${R}"
-        echo "${KC}${P} \`----'${R}" ;;
-      cat)
-        echo "${KC}${P} /\\_/\\${R}"
-        echo "${KC}${P}( ${EYE}   ${EYE})${R}"
-        echo "${KC}${P}(  ω  )${R}"
-        echo "${KC}${P}(\")_(\")${R}" ;;
-      dragon)
-        echo "${KC}${P}/^\\  /^\\${R}"
-        echo "${KC}${P}< ${EYE}  ${EYE} >${R}"
-        echo "${KC}${P}(  ~~  )${R}"
-        echo "${KC}${P} \`-vvvv-'${R}" ;;
-      octopus)
-        echo "${KC}${P} .----.${R}"
-        echo "${KC}${P}( ${EYE}  ${EYE} )${R}"
-        echo "${KC}${P}(______)${R}"
-        echo "${KC}${P}/\\/\\/\\/\\${R}" ;;
-      owl)
-        echo "${KC}${P} /\\  /\\${R}"
-        echo "${KC}${P}((${EYE})(${EYE}))${R}"
-        echo "${KC}${P}(  ><  )${R}"
-        echo "${KC}${P} \`----'${R}" ;;
-      penguin)
-        echo "${KC}${P} .---.${R}"
-        echo "${KC}${P} (${EYE}>${EYE})${R}"
-        echo "${KC}${P}/(   )\\${R}"
-        echo "${KC}${P} \`---'${R}" ;;
-      turtle)
-        echo "${KC}${P} _,--._${R}"
-        echo "${KC}${P}( ${EYE}  ${EYE} )${R}"
-        echo "${KC}${P}[______]${R}"
-        echo "${KC}${P}\`\`    \`\`${R}" ;;
-      ghost)
-        echo "${KC}${P} .----.${R}"
-        echo "${KC}${P}/ ${EYE}  ${EYE} \\${R}"
-        echo "${KC}${P}|      |${R}"
-        echo "${KC}${P}~\`~\`\`~\`~${R}" ;;
-      capybara)
-        echo "${KC}${P}n______n${R}"
-        echo "${KC}${P}( ${EYE}    ${EYE} )${R}"
-        echo "${KC}${P}(  oo  )${R}"
-        echo "${KC}${P}\`------'${R}" ;;
-      robot)
-        echo "${KC}${P} .[||].${R}"
-        echo "${KC}${P}[ ${EYE}  ${EYE} ]${R}"
-        echo "${KC}${P}[ ==== ]${R}"
-        echo "${KC}${P}\`------'${R}" ;;
-      rabbit)
-        echo "${KC}${P} (\\__/)${R}"
-        echo "${KC}${P}( ${EYE}  ${EYE} )${R}"
-        echo "${KC}${P}=(  ..  )=${R}"
-        echo "${KC}${P}(\")__(\")" ;;
-      mushroom)
-        echo "${KC}${P}-o-OO-o-${R}"
-        echo "${KC}${P}(________)${R}"
-        echo "${KC}${P}  |${EYE}${EYE}|${R}"
-        echo "${KC}${P}  |__|${R}" ;;
-      chonk)
-        echo "${KC}${P}/\\    /\\${R}"
-        echo "${KC}${P}( ${EYE}    ${EYE} )${R}"
-        echo "${KC}${P}(  ..  )${R}"
-        echo "${KC}${P}\`------'${R}" ;;
-      cactus)
-        echo "${KC}${P}n ____ n${R}"
-        echo "${KC}${P}||${EYE}  ${EYE}||${R}"
-        echo "${KC}${P}|_|  |_|${R}"
-        echo "${KC}${P}  |  |${R}" ;;
-      snail)
-        echo "${KC}${P}${EYE}   .--.${R}"
-        echo "${KC}${P}\\  ( @ )${R}"
-        echo "${KC}${P} \\_\`--'${R}"
-        echo "${KC}${P}~~~~~~~${R}" ;;
-      *)
-        echo "${KC}${P}(${EYE}${EYE})${R}"
-        echo "${KC}${P}(  )${R}" ;;
+      axolotl)   L1="}~(____)~{";  L2="}~(${EYE}..${EYE})~{"; L3=" (.--.)" ;  L4=" (_/\\_)" ;;
+      duck)      L1="   __";       L2=" <(${EYE} )___";       L3="  (  ._>";   L4="   \`--'" ;;
+      goose)     L1="  (${EYE}>";  L2="   ||";                L3=" _(__)_";    L4="  ^^^^" ;;
+      blob)      L1=" .----.";     L2="( ${EYE}  ${EYE} )";   L3="(      )";   L4=" \`----'" ;;
+      cat)       L1=" /\\_/\\";    L2="( ${EYE}   ${EYE})";    L3="(  ω  )";    L4="(\")_(\")";;
+      dragon)    L1="/^\\  /^\\";  L2="< ${EYE}  ${EYE} >";    L3="(  ~~  )";   L4=" \`-vvvv-'" ;;
+      octopus)   L1=" .----.";     L2="( ${EYE}  ${EYE} )";   L3="(______)";   L4="/\\/\\/\\/\\" ;;
+      owl)       L1=" /\\  /\\";   L2="((${EYE})(${EYE}))";   L3="(  ><  )";   L4=" \`----'" ;;
+      penguin)   L1=" .---.";      L2=" (${EYE}>${EYE})";     L3="/(   )\\";   L4=" \`---'" ;;
+      turtle)    L1=" _,--._";     L2="( ${EYE}  ${EYE} )";   L3="[______]";   L4="\`\`    \`\`" ;;
+      ghost)     L1=" .----.";     L2="/ ${EYE}  ${EYE} \\";   L3="|      |";   L4="~\`~\`\`~\`~" ;;
+      capybara)  L1="n______n";    L2="( ${EYE}    ${EYE} )";  L3="(  oo  )";   L4="\`------'" ;;
+      robot)     L1=" .[||].";     L2="[ ${EYE}  ${EYE} ]";   L3="[ ==== ]";   L4="\`------'" ;;
+      rabbit)    L1=" (\\__/)";    L2="( ${EYE}  ${EYE} )";    L3="=(  ..  )="; L4="(\")__(\")" ;;
+      mushroom)  L1="-o-OO-o-";    L2="(________)";           L3="  |${EYE}${EYE}|"; L4="  |__|" ;;
+      chonk)     L1="/\\    /\\";  L2="( ${EYE}    ${EYE} )";  L3="(  ..  )";   L4="\`------'" ;;
+      cactus)    L1="n ____ n";    L2="||${EYE}  ${EYE}||";    L3="|_|  |_|";   L4="  |  |" ;;
+      snail)     L1="${EYE}   .--."; L2="\\  ( @ )";           L3=" \\_\`--'";   L4="~~~~~~~" ;;
+      *)         L1="(${EYE}${EYE})"; L2="(  )";              L3=""; L4="" ;;
     esac
 
     # Signature species sound
@@ -246,9 +187,97 @@ if [ -f "$BUDDY_STATE" ]; then
       *)        SOUND="~...~" ;;
     esac
 
-    # Name + level + sound
-    echo "${KC}${P}${B}${NAME}${R} ${D}Lv.${PET_LVL} ${PET_XP}/${PET_XPNEXT}xp${R} ${D}${SOUND}${R}"
-    echo "${D}${P}You${R} ${D}Lv.${USR_LVL} ${USR_XP}/${USR_XPNEXT}xp${R}"
+    # --- Collect art lines into array ---
+    ART=()
+    [ -n "$L0" ] && ART+=("$L0")
+    ART+=("$L1" "$L2")
+    [ -n "$L3" ] && ART+=("$L3")
+    [ -n "$L4" ] && ART+=("$L4")
+    ART_COUNT=${#ART[@]}
+    ART_W=14
+
+    # --- Render based on mode ---
+    if [ "$MODE" = "buddy" ]; then
+      # ── Buddy-only: right-aligned art with speech bubble to the left ──
+      INNER_W=28
+      BOX_W=$(( INNER_W + 4 ))
+      GAP=2
+      TOTAL_W=$(( BOX_W + GAP + ART_W ))
+      MARGIN=4
+      DYN_PAD=$(( COLS - TOTAL_W - MARGIN ))
+      [ "$DYN_PAD" -lt 0 ] && DYN_PAD=0
+      SPACER=$(printf "${BB}%${DYN_PAD}s" "")
+
+      # Build bubble from SOUND + name/level info
+      BTEXT="$SOUND"
+      NAME_LINE="${NAME} Lv.${PET_LVL} ${PET_XP}/${PET_XPNEXT}xp"
+      USER_LINE="You Lv.${USR_LVL} ${USR_XP}/${USR_XPNEXT}xp"
+      BUBBLE_LINES=("$BTEXT" "" "$NAME_LINE" "$USER_LINE")
+      BUBBLE_COUNT=${#BUBBLE_LINES[@]}
+
+      # Border
+      BORDER=$(printf '%*s' "$(( BOX_W - 2 ))" '' | tr ' ' '-')
+
+      # Full box: top border, text rows, bottom border
+      BOX=()
+      BOX+=(".${BORDER}.")
+      for bl in "${BUBBLE_LINES[@]}"; do
+        _pad=$(( INNER_W - ${#bl} ))
+        [ "$_pad" -lt 0 ] && _pad=0
+        _pstr=$(printf '%*s' "$_pad" '')
+        BOX+=("| ${bl}${_pstr} |")
+      done
+      BOX+=("+${BORDER}+")
+      BOX_COUNT=${#BOX[@]}
+
+      # Vertically center bubble on art
+      BUBBLE_START=0
+      if [ "$BOX_COUNT" -lt "$ART_COUNT" ]; then
+        BUBBLE_START=$(( (ART_COUNT - BOX_COUNT) / 2 ))
+      fi
+
+      # Connector on middle box line
+      CONN_IDX=$(( BOX_COUNT / 2 ))
+
+      # Max lines = max of art, box
+      MAX_LINES=$ART_COUNT
+      [ "$BOX_COUNT" -gt "$((MAX_LINES - BUBBLE_START))" ] && MAX_LINES=$(( BUBBLE_START + BOX_COUNT ))
+
+      EMPTY_BOX=$(printf '%*s' "$BOX_W" '')
+
+      for (( i=0; i<MAX_LINES; i++ )); do
+        # Art part
+        if [ "$i" -lt "$ART_COUNT" ]; then
+          _art="${KC}${ART[$i]}${R}"
+        else
+          _art=""
+        fi
+
+        # Bubble part
+        bi=$(( i - BUBBLE_START ))
+        if [ "$bi" -ge 0 ] && [ "$bi" -lt "$BOX_COUNT" ]; then
+          _box="${BOX[$bi]}"
+          if [ "$bi" -eq "$CONN_IDX" ]; then
+            _gap="${KC}--${R} "
+          else
+            _gap="   "
+          fi
+          # Color the box borders
+          echo "${SPACER}${KC}${_box}${R}${_gap}${_art}"
+        else
+          echo "${SPACER}${EMPTY_BOX}   ${_art}"
+        fi
+      done
+
+    else
+      # ── Both mode: static padding, simple output ──
+      P="                                        "
+      for _line in "${ART[@]}"; do
+        echo "${KC}${P}${_line}${R}"
+      done
+      echo "${KC}${P}${B}${NAME}${R} ${D}Lv.${PET_LVL} ${PET_XP}/${PET_XPNEXT}xp${R} ${D}${SOUND}${R}"
+      echo "${D}${P}You${R} ${D}Lv.${USR_LVL} ${USR_XP}/${USR_XPNEXT}xp${R}"
+    fi
   fi
 fi # end buddy_state
 fi # end buddy mode
