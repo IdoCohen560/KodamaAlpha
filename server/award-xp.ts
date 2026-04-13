@@ -48,12 +48,13 @@ if (result.awarded > 0) {
       const newAchievements = checkAchievements(c, sid);
 
       for (const ach of newAchievements) {
-        // Award achievement XP
+        // Award achievement XP (50 XP for all tiers)
         awardXP(`achievement-${ach.def.tier}`, sid, ach.def.name);
 
-        // Toast notification
+        // Toast notification with description of what they did
+        const reward = ach.def.cosmeticReward ? ` Reward: ${ach.def.cosmeticReward}` : "";
         saveReaction(
-          `\u{1F3C6} Achievement unlocked: ${ach.def.name}!`,
+          `\u{1F3C6} Achievement: ${ach.def.name}! ${ach.def.desc}. +50 XP!${reward}`,
           "achievement",
         );
       }

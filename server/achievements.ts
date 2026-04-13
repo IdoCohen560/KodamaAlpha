@@ -157,12 +157,12 @@ export const ACHIEVEMENTS: AchievementDef[] = [
 // ─── XP for tier ────────────────────────────────────────────────────────────
 
 export const TIER_XP: Record<AchievementTier, number> = {
-  common: 10,
-  uncommon: 15,
-  rare: 20,
-  epic: 20,
-  legendary: 20,
-  secret: 20,
+  common: 50,
+  uncommon: 50,
+  rare: 50,
+  epic: 50,
+  legendary: 50,
+  secret: 50,
 };
 
 // ─── File I/O ───────────────────────────────────────────────────────────────

@@ -107,11 +107,11 @@ export const XP_AMOUNTS: Record<string, number> = {
   "long-session": 20,
   "streak-day": 5,
   "new-bestiary": 8,
-  "achievement-common": 10,
-  "achievement-uncommon": 15,
-  "achievement-rare": 20,
-  "achievement-epic": 20,
-  "achievement-legendary": 20,
+  "achievement-common": 50,
+  "achievement-uncommon": 50,
+  "achievement-rare": 50,
+  "achievement-epic": 50,
+  "achievement-legendary": 50,
   "daily-challenge": 15,
 };
 
