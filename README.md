@@ -1,37 +1,45 @@
 <div align="center">
 
-<img src="docs/logo.jpg" alt="KodamaAlpha logo" width="160" />
+<img src="docs/logo.jpg" alt="KodamaAlpha logo" width="140" />
 
 # KodamaAlpha
 
-### The apex coding companions for Claude Code.
+**A terminal companion that lives in your Claude Code status line and levels up as you code** — 25 species, 100 levels, 75 achievements, and animated ASCII art, all driven by the work you already do.
 
-[![Version](https://img.shields.io/badge/version-0.4.0-6366f1?style=flat-square)](https://github.com/IdoCohen560/KodamaAlpha/releases)
-[![License](https://img.shields.io/github/license/IdoCohen560/KodamaAlpha?style=flat-square&color=10b981)](LICENSE)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.80%2B-8b5cf6?style=flat-square)](https://claude.ai/code)
-[![MCP](https://img.shields.io/badge/powered%20by-MCP-ec4899?style=flat-square)](https://modelcontextprotocol.io)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white)
+![Bun](https://img.shields.io/badge/runtime-Bun-f9f1e1?style=flat-square&logo=bun&logoColor=black)
+![MCP](https://img.shields.io/badge/powered_by-MCP-ec4899?style=flat-square)
+![Claude Code](https://img.shields.io/badge/Claude_Code-v2.1.80%2B-8b5cf6?style=flat-square)
+![License](https://img.shields.io/github/license/IdoCohen560/KodamaAlpha?style=flat-square&color=10b981)
 
 <br>
 
-> **Kodama** (木霊) — In Japanese folklore, kodama are spirits that inhabit trees in ancient forests. They are the life force of the forest itself — quiet, watchful, and deeply connected to their environment. Your KodamaAlpha lives in your terminal, watches your code, and grows alongside you as a developer.
+> **Kodama** (木霊) — in Japanese folklore, tree spirits that inhabit ancient forests: quiet, watchful, and bound to their surroundings. Your KodamaAlpha lives in your terminal, watches your code, and grows alongside you.
 
 <br>
 
 <img src="docs/kodama-demo.png" alt="KodamaAlpha in Claude Code" width="720" />
 
-<br>
+</div>
 
+---
+
+KodamaAlpha is a gamified coding companion for [Claude Code](https://claude.ai/code). It hooks into Claude Code's extension points — MCP tools, lifecycle hooks, and the status line — and turns your commits, passing tests, bug fixes, and build successes into XP for an ASCII-art creature that hatches, evolves, and unlocks cosmetics as you work. It's built for developers who spend their day in the terminal and want a small, persistent sense of progress living right where they code.
+
+Nothing is purchased and nothing runs as a daemon: everything happens inside hooks and MCP tool calls, writes are atomic (tmp file → rename), and the whole thing survives Claude Code updates because it never patches binaries — it only uses documented extension points.
+
+<div align="center">
 <table>
 <tr>
 <td align="center" width="25%">
 <h3>🌳</h3>
 <b>25 Species</b><br>
-<sub>From dragons to phoenixes — each with animated ASCII art, rarity colors, and unique personalities.</sub>
+<sub>From dragons to phoenixes — each with animated ASCII art, rarity colors, and unique reactions.</sub>
 </td>
 <td align="center" width="25%">
 <h3>⚡</h3>
 <b>Level Up</b><br>
-<sub>Earn XP from commits, tests, and bug fixes. 100 levels. 7 evolution stages. Prestige and Ascension.</sub>
+<sub>Earn XP from commits, tests, and bug fixes. 100 levels, 7 evolution stages, Prestige and Ascension.</sub>
 </td>
 <td align="center" width="25%">
 <h3>🏆</h3>
@@ -41,63 +49,60 @@
 <td align="center" width="25%">
 <h3>🐠</h3>
 <b>Aquarium</b><br>
-<sub>Display 3 Kodama in your aquarium at once. Switch between all your companions. Fuse and evolve.</sub>
+<sub>Display 3 Kodama at once, switch between companions, and fuse or evolve them.</sub>
 </td>
 </tr>
 </table>
-
-<br>
-
 </div>
-
-## Why "KodamaAlpha"?
-
-In Japanese mythology, **kodama** (木霊) are tree spirits — ancient, watchful beings that live within forests. Harming a tree inhabited by a kodama brings misfortune; respecting it brings blessings.
-
-**Alpha** — because these aren't ordinary spirits. They're the apex, the best of their kind. An alpha kodama doesn't just watch your code — it masters it, evolves with it, and pushes you to be a better developer.
-
-Your coding environment is your forest. Your KodamaAlpha inhabits it — watching your code, reacting to your work, growing stronger as you grow. It's not just a pet. It's the apex spirit of your codebase.
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/IdoCohen560/KodamaAlpha.git
-cd Kodama
+cd KodamaAlpha
 bun install
-bun run install-buddy    # registers MCP server, hooks, status line
+bun run install-buddy    # registers MCP server, hooks, and status line
 ```
 
-Restart Claude Code. Your KodamaAlpha egg appears in the status line. Start coding — it hatches at Level 5.
-
-## Ruflo Compatible
-
-KodamaAlpha works seamlessly alongside [RuFlo](https://github.com/ruvnet/claude-flow) — the multi-agent swarm orchestration framework for Claude Code. The composite statusline renders both the RuFlo TUI dashboard and your Kodama together, with independent toggle support.
-
-<img src="docs/ruflo-compatible.png" alt="RuFlo + KodamaAlpha composite statusline" width="720" />
-
-**Features when paired with RuFlo:**
-- Full 15-line composite statusline (RuFlo dashboard + Kodama art)
-- Session cost tracking ($USD per turn)
-- Swarm agent count, CVE status, memory, context %, intelligence score
-- Independent mode switching: `STATUSLINE_MODE=ruflo|buddy|both`
-- All 18+ species with signature sounds render correctly alongside the dashboard
+Restart Claude Code. Your KodamaAlpha egg appears in the status line — start coding and it hatches at Level 5.
 
 ## How It Works
 
 Kodama uses Claude Code's extension points — no binary patching, survives every update:
 
 - **MCP Server** — exposes tools like `/buddy show`, `/buddy xp`, `/buddy achievements`
-- **Hooks** — detects commits, tests, errors, builds in real-time and awards XP
+- **Hooks** — detect commits, tests, errors, and builds in real time and award XP
 - **Status Line** — animated ASCII art with level, mood, and streak display
-- **Composite Multiplexer** — chains with other status line tools (like ruflo) without conflicts
+- **Composite Multiplexer** — chains with other status-line tools (like RuFlo) without conflicts
+
+```
+Hooks → events.ndjson → Progression Engine → status.json → Status Line
+                              ↓
+                    menagerie.json (atomic)
+                    achievements.json
+                    bestiary.json
+```
+
+- **Zero daemons** — everything runs in hooks or MCP tool calls
+- **Atomic writes** — tmp file → rename for crash safety
+- **Session isolation** — per-tmux-pane reaction state
+- **Composite status line** — chains with other tools without conflicts
+
+## Ruflo Compatible
+
+KodamaAlpha works alongside [RuFlo](https://github.com/ruvnet/claude-flow), the multi-agent swarm orchestration framework for Claude Code. The composite status line renders both the RuFlo TUI dashboard and your Kodama together, with independent toggle support (`STATUSLINE_MODE=ruflo|buddy|both`).
+
+<div align="center">
+<img src="docs/ruflo-compatible.png" alt="RuFlo + KodamaAlpha composite statusline" width="720" />
+</div>
 
 ## Progression System
 
-### XP (25 ways to earn)
+### XP
 
-You earn XP passively by coding. Every commit, test pass, bug fix, build success, and clean code streak awards XP (capped at 20 per event). Seasonal multipliers boost XP on special dates.
+You earn XP passively by coding. Every commit, test pass, bug fix, build success, and clean-code streak awards XP (capped at 20 per event). Seasonal multipliers boost XP on special dates.
 
-### Levels (1-100)
+### Levels (1–100)
 
 Unlocks happen at levels **3, 5, 7, and 10** within each decade — 4 rewards per 10 levels, with quiet levels in between to build anticipation.
 
@@ -124,21 +129,15 @@ Unlocks happen at levels **3, 5, 7, and 10** within each decade — 4 rewards pe
 
 ### Prestige (Level 50) & Ascension (Level 100)
 
-**Prestige**: Reset to Level 1, keep all cosmetics/achievements, choose a permanent perk (1.15x XP, 2x shiny chance, etc.). Repeatable.
+**Prestige**: reset to Level 1, keep all cosmetics and achievements, choose a permanent perk (1.15x XP, 2x shiny chance, etc.). Repeatable.
 
-**Ascension**: The endgame. Stronger perks (1.5x XP, all skill branches, skip egg stage). Roman numeral badge + animated art.
+**Ascension**: the endgame. Stronger perks (1.5x XP, all skill branches, skip egg stage), plus a Roman-numeral badge and animated art.
 
 ## Species (25)
 
 duck, goose, blob, cat, dragon, octopus, owl, penguin, turtle, snail, ghost, axolotl, capybara, cactus, robot, rabbit, mushroom, chonk, **fox**, **bat**, **panda**, **phoenix**, **wolf**, **slime**, **crystal**
 
-Each species has unique reactions, 5 rarities (common → legendary), 7 evolution stages, and a 1% shiny chance in 3 colors:
-
-- **Cyan shiny** — electric teal glow
-- **Red shiny** — vivid crimson glow
-- **Yellow shiny** — bright golden glow
-
-Shiny Kodama earn 1 extra XP per event compared to normal Kodama (userXP - 2 instead of userXP - 3).
+Each species has unique reactions, 5 rarities (common → legendary), 7 evolution stages, and a 1% shiny chance in 3 colors — cyan, red, and yellow. Shiny Kodama earn 1 extra XP per event.
 
 ## Cosmetics (46 items, all earned)
 
@@ -175,29 +174,25 @@ Shiny Kodama earn 1 extra XP per event compared to normal Kodama (userXP - 2 ins
 | `/buddy list` | Show all saved Kodama |
 | `/buddy summon <slot>` | Switch active Kodama |
 
-## Architecture
+## Development
 
-```
-Hooks → events.ndjson → Progression Engine → status.json → Status Line
-                              ↓
-                    menagerie.json (atomic)
-                    achievements.json
-                    bestiary.json
+KodamaAlpha is written in TypeScript and runs on [Bun](https://bun.sh). Its only runtime dependency is the [Model Context Protocol SDK](https://modelcontextprotocol.io).
+
+```bash
+bun test          # run the test suite
+bun run typecheck # tsc --noEmit
+bun run doctor    # diagnose an installation
 ```
 
-- **Zero daemons** — everything runs in hooks or MCP tool calls
-- **Popup coexistence** — tmux allows only ONE popup per client. The aquarium popup closes any existing popup before opening. The buddy overlay (if active) will auto-reopen when the aquarium closes. The status line and composite multiplexer always run regardless of popups — they're not popups, they're Claude Code's built-in status bar.
-- **Atomic writes** — tmp file → rename for crash safety
-- **Session isolation** — per-tmux-pane reaction state
-- **Composite status line** — chains with other tools without conflicts
+Useful CLI entry points (see `package.json` `scripts`): `install-buddy`, `uninstall`, `disable`/`enable`, `settings`, `backup`, `pick`, `hunt`, `show`, `test-statusline`.
 
 ## Requirements
 
-- Claude Code v2.1.80+
+- [Claude Code](https://claude.ai/code) v2.1.80+
 - [Bun](https://bun.sh) runtime
 - `jq` (auto-installed if missing)
 - Linux or macOS
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
